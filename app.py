@@ -21,7 +21,6 @@ from sklearn.impute import SimpleImputer
 
 app = Flask(__name__)
 
-<<<<<<< HEAD
 # ─── JSON encoder: turn NaN/Inf → null so jsonify never crashes ───────────────
 import math, json as _json
 class _SafeEncoder(app.json_provider_class):
@@ -41,8 +40,6 @@ app.json = _SafeEncoder(app)
 # ─── Resolve paths relative to this script, not the CWD ──────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-=======
->>>>>>> 8095a4f4d3c6fdaea9d9da0af6431f06fcd1e9ef
 # ─── Global state ─────────────────────────────────────────────────────────────
 _df_cache = None
 _hotspot_cache = None
@@ -126,12 +123,8 @@ def compute_hotspots(df: pd.DataFrame, grid_size: float = 0.005) -> pd.DataFrame
 
 
 def get_df():
-<<<<<<< HEAD
     default = os.path.join(BASE_DIR, "data", "violations.csv")
     path = os.environ.get("VIOLATIONS_CSV", default)
-=======
-    path = os.environ.get("VIOLATIONS_CSV", "data/violations.csv")
->>>>>>> 8095a4f4d3c6fdaea9d9da0af6431f06fcd1e9ef
     return load_data(path)
 
 
@@ -149,7 +142,6 @@ def index():
     return render_template("index.html")
 
 
-<<<<<<< HEAD
 @app.route("/api/set_csv", methods=["POST"])
 def api_set_csv():
     global _df_cache, _hotspot_cache
@@ -166,8 +158,6 @@ def api_set_csv():
     return jsonify({"ok": True, "path": path})
 
 
-=======
->>>>>>> 8095a4f4d3c6fdaea9d9da0af6431f06fcd1e9ef
 @app.route("/api/kpis")
 def api_kpis():
     df = get_df()
@@ -188,13 +178,9 @@ def api_kpis():
     park_total = len(parking)
     park_pct   = round(park_total / total * 100, 1) if total else 0
     high_impact = int((parking["impact_score"] == 3).sum())
-<<<<<<< HEAD
     res_series  = parking["resolution_min"].dropna()
     avg_res     = float(res_series.median()) if len(res_series) else 0
     avg_res     = 0 if (np.isnan(avg_res) or np.isinf(avg_res)) else avg_res
-=======
-    avg_res     = float(parking["resolution_min"].dropna().median()) if len(parking) else 0
->>>>>>> 8095a4f4d3c6fdaea9d9da0af6431f06fcd1e9ef
     hotspots = get_hotspots(df)
     high_zones = int((hotspots["risk_tier"] == "HIGH").sum())
 
@@ -348,7 +334,6 @@ def api_temporal():
 
     # Resolution distribution
     res = parking["resolution_min"].dropna()
-<<<<<<< HEAD
     if len(res) > 0:
         hist, edges = np.histogram(res, bins=50)
         res_median = float(res.median())
@@ -360,13 +345,6 @@ def api_temporal():
         "counts": hist.tolist(),
         "edges": edges.tolist(),
         "median": res_median,
-=======
-    hist, edges = np.histogram(res, bins=50)
-    resolution = {
-        "counts": hist.tolist(),
-        "edges": edges.tolist(),
-        "median": float(res.median()),
->>>>>>> 8095a4f4d3c6fdaea9d9da0af6431f06fcd1e9ef
     }
 
     return jsonify({
@@ -489,11 +467,7 @@ def api_ml_train():
         X_s, y_s, test_size=test_size, random_state=random_state, stratify=y_s
     )
 
-<<<<<<< HEAD
     MODEL_PKL = os.path.join(BASE_DIR, "model.pkl")
-=======
-    MODEL_PKL = "model.pkl"
->>>>>>> 8095a4f4d3c6fdaea9d9da0af6431f06fcd1e9ef
     if model_name == "Random Forest" and os.path.exists(MODEL_PKL):
         model = joblib.load(MODEL_PKL)
     elif model_name == "Random Forest":
